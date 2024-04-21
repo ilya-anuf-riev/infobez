@@ -39,7 +39,7 @@ class CommentController extends Controller
         $comment->article_id = $request->article_id;
         $res = $comment->save();
 
-        if ($res) Mail::to('moosbeere_O@mail.ru')->send(new CommentMail($comment, $article));
+        if ($res) Mail::to('ilya-belov-20244@mail.ru')->send(new CommentMail($comment, $article));
 
         return redirect()->route('article.show', ['article'=>$request->article_id]);
     }

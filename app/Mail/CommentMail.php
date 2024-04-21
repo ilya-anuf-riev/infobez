@@ -31,7 +31,7 @@ class CommentMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: new Address('moosbeere_O@mail.ru'),
+            from: new Address('ilya-belov-20244@mail.ru'),
             subject: env('MAIL_FROM_NAME'),
         );
     }
