@@ -23,6 +23,12 @@
   <h3>Comments</h3>
 </div>
 
+@if (session('res'))
+  <div class="alert-success">
+    <p>Комментарий успешно добавлен и отправлен на модерацию!</p>
+  </div>
+@endif
+
   @if($errors->any())
   <div class="alert-danger">
     <ul>
