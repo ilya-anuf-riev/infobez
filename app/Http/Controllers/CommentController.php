@@ -48,15 +48,32 @@ class CommentController extends Controller
         return redirect()->route('article.show', ['article'=>$request->article_id])->with(['res'=>$res]);
     }
 
-    public function edit(Comment $comment){
-        Gate::authorize('comment', ['comment'=>$comment]);
-        return view('comment.update', ['comment'=>$comment]);
-    }
+    public function edit(Comment $comment){ 
+        Gate::authorize('comment', ['comment'=>$comment]); 
+        return view('comment.edit', ['comment'=>$comment]); 
+        } 
+        
+        public function update(Request $request, Comment $comment) 
+        { 
+        
+        Gate::authorize('comment', ['comment'=>$comment]); 
+        
+        $comment->title = $request->title; 
+        $comment->desc = $request->desc; 
+        $comment->user_id = auth()->id(); 
+        $comment->article_id = $request->article_id; 
+        // $comment->article()->associate($comment->article_id); 
+        $comment->save(); 
+        return redirect()->route('article.show', ['article'=>$request->article_id]); 
+        } 
+        
+        public function delete(Comment $comment){ 
+        Gate::authorize('comment',['comment'=>$comment]); 
+        $article_id = $comment->article_id; 
+        $res = $comment->delete(); 
+        return redirect()->route('article.show', ['article'=>$article_id]); 
+        }
 
-    public function delete(Comment $comment){
-        Gate::authorize('comment',['comment'=>$comment]);
-        return redirect()->route('article.show', ['article'=>1]);
-    }
 
     public function accept(Comment $comment){
         $comment->accept = true;

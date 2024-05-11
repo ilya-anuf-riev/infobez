@@ -1,9 +1,10 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
+use App\Http\Controllers\MainController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\CommentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -11,28 +12,35 @@ use Inertia\Inertia;
 |--------------------------------------------------------------------------
 |
 | Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "web" middleware group. Make something great!
 |
 */
+//article
+Route::resource('article', ArticleController::class)->middleware('auth:sanctum');
+
+//comment
+Route::controller(CommentController::class)->group(function(){
+    Route::post('/comment', 'store')->middleware('auth:sanctum');
+    Route::get('/comment/edit/{comment}', 'edit');
+    Route::post('/comment/update/{comment}', 'update');
+    Route::get('/comment/delete/{comment}', 'delete');
+    Route::get('/comment/index', 'index')->name('comment.index');
+    Route::get('/comment/{comment}/accept', 'accept');
+    Route::get('/comment/{comment}/reject', 'reject');
+});
+
+//Auth
+Route::get('signin', [AuthController::class, 'signin']);
+Route::post('registr', [AuthController::class, 'registr']);
+Route::get('signup', [AuthController::class, 'signup'])->name('login');
+Route::post('login', [AuthController::class, 'login']);
+Route::get('logout', [AuthController::class, 'logout']);
+
+//Main
+Route::get('main', [MainController::class, 'index']);
+Route::get('galery/{img}', [MainController::class, 'show']);
 
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
+    return view('layout');
 });
-
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
-
-require __DIR__.'/auth.php';
