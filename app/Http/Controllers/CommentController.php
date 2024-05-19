@@ -51,7 +51,9 @@ class CommentController extends Controller
         return redirect()->route('article.show', ['article'=>$request->article_id])->with(['res'=>$res]);
     }
 
-    public function edit(Comment $comment){ 
+    public function edit(Comment $comment){
+        Cache::forget('comments');
+        Cache::forget('article_comment'.$comment->article_id); 
         Gate::authorize('comment', ['comment'=>$comment]); 
         return view('comment.edit', ['comment'=>$comment]); 
         } 
@@ -70,7 +72,9 @@ class CommentController extends Controller
         return redirect()->route('article.show', ['article'=>$request->article_id]); 
         } 
         
-        public function delete(Comment $comment){ 
+        public function delete(Comment $comment){
+        Cache::forget('comments');
+        Cache::forget('article_comment'.$comment->article_id); 
         Gate::authorize('comment',['comment'=>$comment]); 
         $article_id = $comment->article_id; 
         $res = $comment->delete(); 

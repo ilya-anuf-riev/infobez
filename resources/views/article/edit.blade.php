@@ -1,7 +1,8 @@
 @extends('layout')
 @section('content')
 
-@if($errors->any())
+
+  @if($errors->any())
   <div class="alert-danger">
     <ul>
       @foreach($errors->all() as $error)
@@ -10,26 +11,27 @@
     </ul>
   </div>
   @endif
-  
-<form action="/registr" method="post">
+
+
+<form action="/article/{{$article->id}}" method="post">
+  @METHOD('PUT')
   @csrf
   <div class="form-group">
-    <label for="name">Name</label>
-    <input type="text" class="form-control" id="name" name="name">
+    <label for="date">Date</label>
+    <input type="date" class="form-control" id="date" name="date" value="{{$article->date}}">
   </div>
   <div class="form-group">
-    <label for="exampleInputEmail1">Email address</label>
-    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" name="email">
-    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+    <label for="title">Title</label>
+    <input type="text" class="form-control" id="title" name="title" value="{{$article->title}}">
   </div>
   <div class="form-group">
-    <label for="exampleInputPassword1">Password</label>
-    <input type="password" class="form-control" id="exampleInputPassword1" name="password">
+    <label for="shortDesc">Shortdesc</label>
+    <input type="text" class="form-control" id="shortDesc" name="shortDesc" value="{{$article->shortDesc}}">
   </div>
-  <div class="form-group form-check">
-    <input type="checkbox" class="form-check-input" id="exampleCheck1">
-    <label class="form-check-label" for="exampleCheck1">Check me out</label>
+  <div class="form-group">
+    <label for="text">Text</label>
+    <textarea name="text" id="text" cols="30" rows="10" class="form-control">{{$article->text}}</textarea>
   </div>
-  <button type="submit" class="btn btn-primary">Submit</button>
+  <button type="submit" class="btn btn-primary">Update</button>
 </form>
 @endsection

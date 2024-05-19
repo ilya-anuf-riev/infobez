@@ -22,6 +22,7 @@ class ArticleController extends Controller
         $articles = Cache::remember('articles'.$currentPage, 3000, function(){
             return Article::latest()->paginate(6);        
         });
+        if(request()->expectsJson()) return response()->json($articles);
         return view('article.index', ['articles'=>$articles]);
     }
 
@@ -39,11 +40,8 @@ class ArticleController extends Controller
     public function store(Request $request)
     {
         $keys = DB::table('cache')
-                ->select('key')
-                ->whereRaw('`key` GLOB :key', [':key' => 'articles*[0-9]'])->get();
-        foreach($keys as $key){
-            Cache::forget($key->key);
-        }
+                ->whereRaw('`key` GLOB :key', [':key' => 'articles*[0-9]'])->delete();
+
         // Log::alert($keys);
         Gate::authorize('create', [self::class]);
         $request->validate([
