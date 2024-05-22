@@ -11,6 +11,7 @@ use App\Mail\StatMail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 
+
 class StatCommand extends Command
 {
     /**
@@ -34,6 +35,8 @@ class StatCommand extends Command
     {
         $commentCount = Comment::WhereDate('created_at', Carbon::today())->count();
         $ArticleCount = StatArticle::all()->count();
+        StatArticle::whereNotNull('id')->delete();
+        //Log::alert($commentCount);
         Mail::to('ilya-belov-20244@mail.ru')->send(new StatMail($commentCount,$ArticleCount));
     }
 }
