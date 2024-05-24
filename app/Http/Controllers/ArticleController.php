@@ -115,9 +115,23 @@ class ArticleController extends Controller
      */
     public function destroy(Article $article)
     {
-        Cache::flush();
-        Gate::authorize('create', [self::class]);
-        $article->delete();
+        Gate::authorize('create', [self::class], $article);
+        $comments = Comment::where('article_id', $article->id)->delete();
+        $res = $article->delete();
+        if ($res){
+            $keys = DB::table('cache')->whereRaw('`key` GLOB :key', [':key'=>'article_comment*[0-9]'])->get();
+            foreach($keys as $key){
+                Cache::forget($key->key);
+            }
+            $keys = DB::table('cache')->whereRaw('`key` GLOB :key', [':key'=>'articles*[0-9]'])->get();
+            foreach($keys as $key){
+                Cache::forget($key->key);
+            }
+            $keys = DB::table('cache')->whereRaw('`key` GLOB :key', [':key'=>'comments*[0-9]'])->get();
+            foreach($keys as $key){
+                Cache::forget($key->key);
+            }
+        }
         return redirect()->route('article.index');
     }
 }
